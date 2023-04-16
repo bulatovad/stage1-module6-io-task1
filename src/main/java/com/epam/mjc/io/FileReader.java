@@ -1,5 +1,6 @@
 package com.epam.mjc.io;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
@@ -7,55 +8,50 @@ import java.io.IOException;
 public class FileReader {
 
     public Profile getDataFromFile(File file)  {
-        String profileData = getDataFromTxt(file);
+       String[] lines = getLinesFromFile(file);
+       Profile p = new Profile();
+       for(String line: lines) {
+           String[] data = line.split(": ");
+           switch (data[0]) {
+               case "Name":
+                   p.setName(data[1]);
+                   break;
+               case "Age":
+                   p.setAge(Integer.parseInt(data[1]));
+                   break;
+               case "Email":
+                   p.setEmail(data[1]);
+                   break;
+               case "Phone":
+                   p.setPhone(Long.parseLong(data[1]));
+           }
 
-        String[] lines = profileData.split("\r\n");
-        Profile p = new Profile();
-        for(String line: lines) {
-            String[] data = line.split(": ");
-            switch (data[0]) {
-                case "Name":
-                    p.setName(data[1]);
-                    break;
-                case "Age":
-                    p.setAge(Integer.parseInt(data[1]));
-                    break;
-                case "Email":
-                    p.setEmail(data[1]);
-                    break;
-                case "Phone":
-                    p.setPhone(Long.parseLong(data[1]));
-                    break;
-            }
-        }
-        return p;
+       }
+       return p;
     }
 
-    private String getDataFromTxt (File file)  {
-        java.io.FileReader inputStream = null;
-        String profileTxt = "";
-
+    private String[] getLinesFromFile (File file)  {
+       String[] lines = new String[4];
+       BufferedReader br = null;
         try {
-            inputStream = new java.io.FileReader(file);
-
-            int c;
-            while ((c = inputStream.read()) != -1) {
-                profileTxt += ""+ (char)c;
+            br = new BufferedReader(new java.io.FileReader(file));
+            int num=0;
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines[num++] = line;
             }
         } catch (IOException io) {
             io.printStackTrace();
         }
         finally {
-            if(inputStream!=null) {
+            if(br != null) {
                 try {
-                    inputStream.close();
+                    br.close();
                 } catch (IOException io) {
                     io.printStackTrace();
                 }
-
             }
         }
-
-        return profileTxt;
+       return lines;
     }
 }
