@@ -24,6 +24,9 @@ public class FileReader {
                    break;
                case "Phone":
                    p.setPhone(Long.parseLong(data[1]));
+                   break;
+               default:
+                   break;
            }
 
        }
@@ -32,9 +35,9 @@ public class FileReader {
 
     private String[] getLinesFromFile (File file)  {
        String[] lines = new String[4];
-       BufferedReader br = null;
-        try {
-            br = new BufferedReader(new java.io.FileReader(file));
+        try(java.io.FileReader fr = new java.io.FileReader(file);
+            BufferedReader br = new BufferedReader(fr);) {
+
             int num=0;
             String line;
             while ((line = br.readLine()) != null) {
@@ -42,15 +45,6 @@ public class FileReader {
             }
         } catch (IOException io) {
             io.printStackTrace();
-        }
-        finally {
-            if(br != null) {
-                try {
-                    br.close();
-                } catch (IOException io) {
-                    io.printStackTrace();
-                }
-            }
         }
        return lines;
     }
